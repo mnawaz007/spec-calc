@@ -5,11 +5,6 @@
   "env": {
     "FLASK_ENV": "production"
   },
-  "functions": {
-    "api/**/*.py": {
-      "runtime": "python@3.9"
-    }
-  },
   "rewrites": [
     {
       "source": "/api/(.*)",
