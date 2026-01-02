@@ -1,0 +1,47 @@
+.result-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px;
+  margin-top: 20px;
+  background-color: #e8f5e9;
+  border: 2px solid #4caf50;
+  border-radius: 8px;
+  text-align: center;
+  animation: slideIn 0.3s ease-in-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.result-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2e7d32;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.result-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1b5e20;
+  word-break: break-all;
+}
+
+.result-calculation {
+  font-size: 1rem;
+  color: #558b2f;
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(76, 175, 80, 0.3);
+}

@@ -1,0 +1,198 @@
+openapi: 3.0.0
+info:
+  title: Calculator API
+  description: Simple arithmetic calculator API supporting basic operations with robust error handling
+  version: 1.0.0
+  contact:
+    name: Calculator Project
+    url: https://github.com/speckit/calculator
+
+servers:
+  - url: http://localhost:5000/api
+    description: Development server
+  - url: https://api.calculator.example.com/api
+    description: Production server (example)
+
+paths:
+  /calculate:
+    post:
+      summary: Perform a calculation
+      description: |
+        Execute a single arithmetic operation with two operands.
+        Supports addition, subtraction, multiplication, and division.
+        All inputs are validated. Division by zero returns an error.
+      operationId: calculateOperation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalculationRequest'
+            examples:
+              addition:
+                summary: Addition example
+                value:
+                  operand1: 5
+                  operand2: 3
+                  operator: "+"
+              subtraction:
+                summary: Subtraction example
+                value:
+                  operand1: 10
+                  operand2: 7
+                  operator: "−"
+              multiplication:
+                summary: Multiplication example
+                value:
+                  operand1: 6
+                  operand2: 4
+                  operator: "×"
+              division:
+                summary: Division example
+                value:
+                  operand1: 20
+                  operand2: 5
+                  operator: "÷"
+              decimal:
+                summary: Decimal addition
+                value:
+                  operand1: 2.5
+                  operand2: 3.75
+                  operator: "+"
+              negative:
+                summary: Negative number calculation
+                value:
+                  operand1: -5
+                  operand2: 3
+                  operator: "+"
+
+      responses:
+        '200':
+          description: Calculation successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalculationResponse'
+              examples:
+                simple_addition:
+                  summary: 5 + 3 = 8
+                  value:
+                    result: 8
+                decimal_result:
+                  summary: 2.5 + 3.75 = 6.25
+                  value:
+                    result: 6.25
+                negative_result:
+                  summary: -5 + 3 = -2
+                  value:
+                    result: -2
+
+        '400':
+          description: |
+            Bad request - validation failed. Common cases:
+            - Non-numeric operand
+            - Invalid operator
+            - Division by zero
+            - Missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalid_operand:
+                  summary: Non-numeric operand
+                  value:
+                    error: "Invalid input: Please enter numeric values for both operands."
+                invalid_operator:
+                  summary: Unsupported operator
+                  value:
+                    error: "Invalid operator. Supported operators are: +, −, ×, ÷"
+                division_by_zero:
+                  summary: Division by zero
+                  value:
+                    error: "Division by zero is not allowed"
+                missing_field:
+                  summary: Missing required field
+                  value:
+                    error: "Invalid input: operand1 is required."
+
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Internal server error"
+
+components:
+  schemas:
+    CalculationRequest:
+      type: object
+      description: Request to perform a calculation
+      required:
+        - operand1
+        - operand2
+        - operator
+      properties:
+        operand1:
+          type: number
+          format: double
+          description: First operand (supports integers, decimals, and negatives)
+          examples:
+            - 5
+            - 2.5
+            - -10
+        operand2:
+          type: number
+          format: double
+          description: Second operand (supports integers, decimals, and negatives)
+          examples:
+            - 3
+            - 3.75
+            - -2
+        operator:
+          type: string
+          enum:
+            - "+"
+            - "−"
+            - "×"
+            - "÷"
+          description: |
+            Arithmetic operator.
+            Note: Unicode characters used (− for minus, × for multiply, ÷ for divide).
+            Frontend may need to normalize keyboard input (e.g., `-` → `−`).
+
+    CalculationResponse:
+      type: object
+      description: Successful calculation result
+      required:
+        - result
+      properties:
+        result:
+          type: number
+          format: double
+          description: The arithmetic result of the operation
+          examples:
+            - 8
+            - 6.25
+            - -2
+
+    ErrorResponse:
+      type: object
+      description: Error response for failed calculations
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Human-readable error message
+          examples:
+            - "Division by zero is not allowed"
+            - "Invalid input: Please enter numeric values for both operands."
+            - "Invalid operator. Supported operators are: +, −, ×, ÷"
+            - "Invalid input: operand1 is required."
+
+tags:
+  - name: Calculations
+    description: Arithmetic calculation operations
